@@ -9,7 +9,6 @@ class Settings(BaseSettings):
 
 settings = Settings()
 
-
 # https://stackoverflow.com/questions/7507825/where-is-a-complete-example-of-logging-config-dictconfig
 logging_config = {
     'version': 1,
@@ -30,12 +29,12 @@ logging_config = {
     },
     'root': {
         'handlers': ['console'],
-        'level':  settings.LOG_LEVEL,
+        'level': settings.LOG_LEVEL,
     },
     'loggers': {
         '': {  # root logger
             'handlers': ['console'],
-            'level':  settings.LOG_LEVEL,
+            'level': settings.LOG_LEVEL,
             'propagate': True
         },
         "uvicorn": {
