@@ -1,0 +1,82 @@
+name: Scan Fast API app on merge pipeline
+run-name: Scan Fast API app on merge pipeline
+
+on:
+  pull_request:
+    types:
+      - closed
+
+jobs:
+  if_merged:
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    steps:
+    - run: |
+        echo The PR was merged
+
+  sonarcloud:
+    name: Sonarcloud scan
+    runs-on: ubuntu-latest
+    needs: [if_merged]
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: SonarCloud Scan
+        uses: sonarsource/sonarcloud-github-action@v3.1.0
+        with:
+          args: >
+            -Dsonar.organization=boyanaboneva
+            -Dsonar.projectKey=boyanaboneva_devops-programme
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
+  snyk:
+    name: Snyk scan
+    runs-on: ubuntu-latest
+    needs: [if_merged]
+    steps:
+      - uses: actions/checkout@master
+      - name: Run Snyk to check for vulnerabilities
+        uses: snyk/actions/python@master
+        continue-on-error: true
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        with:
+          args: --severity-threshold=high
+
+  docker-trivy:
+    runs-on: ubuntu-latest
+    needs: [if_merged, snyk, sonarcloud]
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Login to DockerHub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build docker image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: false
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/fastapi:${{ github.sha }}
+
+      - name: Trivy scan
+        uses: aquasecurity/trivy-action@0.28.0
+        with:
+          image-ref: ${{ secrets.DOCKERHUB_USERNAME }}/fastapi:${{ github.sha }}
+          format: "table"
+          ignore-unfixed: true
+          vuln-type: "os,library"
+          severity: 'CRITICAL,HIGH'
+
+      - name: Push docker image
+        if: ${{ success() }}
+        run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/fastapi:${{ github.sha }}

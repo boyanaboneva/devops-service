@@ -12,11 +12,22 @@ To run the tests with coverage use following command:
 pytest --cov=app --cov-report=term-missing
 ```
 
+## Docker
 To build Dockerfile locally use following commands:
 ```shell
-docker build . -t [tag] -f /path/to/Dockerfile/image-name
+docker build . -t [image-name]:[tag] -f /path/to/Dockerfile
 ```
 ```shell
 docker run -d tag
 ```
 then open a browser and navigate to http://localhost:8000. If it opens "Hello world", then it works.
+
+## Workflows
+There are two workflows in the project. One should trigger on pull request and another one on merge. There is no option 
+for triggering on push, cause it may cost a lot of resources.
+
+To run ***fastapi_merge_workflow.yml*** workflow, a pull request should be made to the main branch and merged to GitHub. 
+It will trigger the pipeline itself in the Actions tab in GitHub.
+
+To run ***fastapi_pr_workflow.yml*** pipeline, a pull request should be made to the main branch to GitHub. 
+It will trigger the pipeline itself in the Actions tab in GitHub.
