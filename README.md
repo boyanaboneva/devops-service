@@ -26,8 +26,8 @@ then open a browser and navigate to http://localhost:8000. If it opens "Hello wo
 There are two workflows in the project. One should trigger on pull request and another one on merge. There is no option 
 for triggering on push, cause it may cost a lot of resources.
 
-To run ***fastapi_merge_workflow.yml*** workflow, a pull request should be made to the main branch and merged to GitHub. 
+To run ***fastapi_merge.yml*** workflow, a pull request should be made to the main branch and merged to GitHub. 
 It will trigger the pipeline itself in the Actions tab in GitHub.
 
-To run ***fastapi_pr_workflow.yml*** pipeline, a pull request should be made to the main branch to GitHub. 
+To run ***fastapi_pr.yml*** pipeline, a pull request should be made to the main branch to GitHub. 
 It will trigger the pipeline itself in the Actions tab in GitHub.
