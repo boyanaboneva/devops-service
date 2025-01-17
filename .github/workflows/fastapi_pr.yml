@@ -91,6 +91,7 @@ jobs:
   check-notification:
     name: Check notification
     runs-on: ubuntu-latest
+    needs: [gitleaks-scan, editorconfig,python-pylint, python-black, markdownlint-cli, unittests]
     steps:
       - uses: actions/checkout@master
       - name: Microsoft Teams Notification
@@ -105,6 +106,7 @@ jobs:
   if_failure:
     name: Only if failure
     runs-on: ubuntu-latest
+    needs: [gitleaks-scan, editorconfig, python-pylint, python-black, markdownlint-cli, unittests]
     steps:
       - uses: actions/checkout@master
       - name: Microsoft Teams Notification
