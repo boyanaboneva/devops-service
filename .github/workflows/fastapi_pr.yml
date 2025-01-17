@@ -102,7 +102,6 @@ jobs:
           needs: ${{ toJson(needs) }}
           job: ${{ toJson(job) }}
           steps: ${{ toJson(steps) }}
-          title: "`Overwrote title in ${workflow_link}`"
 
   if_failure:
     name: Only if failure
