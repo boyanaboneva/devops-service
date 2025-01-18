@@ -93,22 +93,20 @@ jobs:
     runs-on: ubuntu-latest
     needs: [ gitleaks-scan, editorconfig,python-pylint, python-black, markdownlint-cli, unittests ]
     steps:
-      - uses: actions/checkout@master
       - name: Microsoft Teams Notification
         uses: skitionek/notify-microsoft-teams@master
         if: always()
         with:
           webhook_url: ${{ vars.MSTEAMS_WEBHOOK }}
-          needs: ${{ toJson(needs) }}
-          job: ${{ toJson(job) }}
-          steps: ${{ toJson(steps) }}
+          needs: ${{ toJSON(needs) }}
+          job: ${{ toJSON(job) }}
+          steps: ${{ toJSON(steps) }}
 
   if_failure:
     name: Only if failure
     runs-on: ubuntu-latest
     needs: [ gitleaks-scan, editorconfig,python-pylint, python-black, markdownlint-cli, unittests ]
     steps:
-      - uses: actions/checkout@master
       - name: Microsoft Teams Notification
         uses: skitionek/notify-microsoft-teams@master
         if: failure()

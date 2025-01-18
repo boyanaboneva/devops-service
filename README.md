@@ -27,7 +27,9 @@ There are two workflows in the project. One should trigger on pull request and a
 for triggering on push, cause it may cost a lot of resources.
 
 To run ***fastapi_merge.yml*** workflow, a pull request should be made to the main branch and merged to GitHub. 
-It will trigger the pipeline itself in the Actions tab in GitHub.
+It will trigger the pipeline and can be seen in GitHub -> Actions tab. The workflow includes the following checks:
+SonarCloud, Snyk, Trivy. It also builds the Docker image and push it to DockerHub.
 
 To run ***fastapi_pr.yml*** pipeline, a pull request should be made to the main branch to GitHub. 
-It will trigger the pipeline itself in the Actions tab in GitHub.
+It will trigger the pipeline and can be seen in GitHub -> Actions tab. The workflow includes the following checks:
+GitLeaks, EditConfig, Python PyLint, Python Black, MarkdownLint CLI, Unit tests.
