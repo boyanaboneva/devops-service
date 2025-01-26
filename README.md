@@ -81,30 +81,59 @@ argocd account update-password
 
 After logging in, click the '+ New App' button, give the app a name (at this example set 'app'), use the project 'default', 
 and leave the sync policy as 'Manual'.
-Connect the repo to Argo CD by setting repository URL to the GitHub repo URL - https://github.com/boyanaboneva/devops-service.git, 
-leave revision as 'HEAD', and set the path to the given app name - in this case 'app'.
-For 'Destination' set cluster to 'https://kubernetes.default.svc' and namespace to 'default'.
-Finally, click on the 'Create' button.
+Connect the deployment repo to Argo CD by setting repository URL to the GitHub repo URL: 
+https://github.com/boyanaboneva/devops-gitops, 
+leave revision as 'HEAD', and set the path to the deployment folder name - in this case 'devops-service-deployment'.
+For 'Destination' set cluster to:
+https://kubernetes.default.svc 
+and namespace to 'application'. Finally, click on the 'Create' button.
 
 ### Sync (Deploy) The Application
 
-Once the application is created, you can view its status in the terminal:
-```
-$ argocd app get app
-Name:               argocd/app
-Project:            default
-Server:             https://kubernetes.default.svc
-Namespace:          default
-URL:                https://localhost:8080/applications/app
-Source:
-- Repo:             https://github.com/boyanaboneva/devops-service.git
-  Target:           HEAD
-  Path:             app
-SyncWindow:         Sync Allowed
-Sync Policy:        Manual
-Sync Status:        Synced to HEAD (17dfc6c)
-Health Status:      Healthy
-```
 If it's Health status is 'Out of sync', then click on the 'Sync apps' button in the application page UI. A panel will be
 opened and then, click on 'Synchronize' button.
 You can see more details by clicking at the 'app' application.
+
+## Kubernetes deployment
+
+Deployments files are in another repo: https://github.com/boyanaboneva/devops-gitops
+
+Create another namespace, e.g. 'application':
+```shell
+kubectl create namespace application
+```
+
+To create a config map with environment variables navigate to the file in the gitops repo via terminal:
+```shell
+kubectl apply -f env_fastapi_configmap.yml
+```
+
+Using terminal navigate to the kubernetes deployment folder in the gitops repo. Apply the 'deployment.yml' file in the
+newly created namespace, e.g. 'application':
+```shell
+kubectl apply -f deployment.yml -n application
+```
+The response should look like this:
+```shell
+deployment.apps/fast-api-deployment created
+```
+
+To check everything is applied, get the pods of this namespace:
+```shell
+kubectl get pods -n application
+```
+The response should look like this:
+```shell
+NAME                                   READY   STATUS    RESTARTS   AGE
+fast-api-deployment-66ff55bb64-cmkbl   1/1     Running   0          22s
+```
+
+Using terminal navigate to the kubernetes deployment folder in the gitops repo. Apply the 'service.yml' file in the
+newly created namespace, e.g. 'application':
+```shell
+kubectl apply -f service.yml -n application
+```
+The response should look like this:
+```shell
+service/fastapi-service configured
+```
