@@ -137,3 +137,6 @@ The response should look like this:
 ```shell
 service/fastapi-service configured
 ```
+
+## Software architecture diagram
+![alt text](resources/software-architecture.png "architecture")
